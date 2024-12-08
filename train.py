@@ -15,7 +15,8 @@ from torch.utils.data import DataLoader
 from retinanet import coco_eval
 from retinanet import csv_eval
 
-assert torch.__version__.split('.')[0] == '1'
+print(torch.__version__)
+#assert torch.__version__.split('.')[0] == '1'
 
 print('CUDA available: {}'.format(torch.cuda.is_available()))
 
@@ -148,6 +149,9 @@ def main(args=None):
                 print(
                     'Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}'.format(
                         epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(loss_hist)))
+                with open('training_loss.txt', 'a') as f:
+                    f.write('Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}\n'.format(
+                        epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(loss_hist)))
 
                 del classification_loss
                 del regression_loss
@@ -166,6 +170,10 @@ def main(args=None):
             print('Evaluating dataset')
 
             mAP = csv_eval.evaluate(dataset_val, retinanet)
+            print(mAP)
+            with open('training_mAP.txt', 'a') as f:
+                f.write(f'epoch: {epoch_num}\n')
+                f.write(f'{mAP}\n')
 
         scheduler.step(np.mean(epoch_loss))
 

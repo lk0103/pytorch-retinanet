@@ -405,6 +405,9 @@ class Normalizer(object):
 
         image, annots = sample['img'], sample['annot']
 
+        if image.shape[2] > 3:
+            image = image[:, :, :3]
+
         return {'img':((image.astype(np.float32)-self.mean)/self.std), 'annot': annots}
 
 class UnNormalizer(object):

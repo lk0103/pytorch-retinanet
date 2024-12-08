@@ -6,7 +6,7 @@ from retinanet import model
 from retinanet.dataloader import CSVDataset, Resizer, Normalizer
 from retinanet import csv_eval
 
-assert torch.__version__.split('.')[0] == '1'
+#assert torch.__version__.split('.')[0] == '1'
 
 print('CUDA available: {}'.format(torch.cuda.is_available()))
 
@@ -37,14 +37,19 @@ def main(args=None):
         #retinanet.load_state_dict(torch.load(parser.model_path))
         retinanet = torch.nn.DataParallel(retinanet).cuda()
     else:
-        retinanet.load_state_dict(torch.load(parser.model_path))
+        print(parser.model_path)
+        #retinanet.load_state_dict(torch.load(parser.model_path))
         retinanet = torch.nn.DataParallel(retinanet)
 
     retinanet.training = False
     retinanet.eval()
     retinanet.module.freeze_bn()
 
-    print(csv_eval.evaluate(dataset_val, retinanet,iou_threshold=float(parser.iou_threshold)))
+    mAP = csv_eval.evaluate(dataset_val, retinanet, iou_threshold=float(parser.iou_threshold))
+    print(mAP)
+
+    with open(f'eval_{parser.csv_annotations_path}_mAP.txt', 'a') as f:
+        f.write(f'{mAP}\n')
 
 
 
