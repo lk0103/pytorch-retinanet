@@ -43,12 +43,12 @@ def main(args=None):
 
     retinanet.training = False
     retinanet.eval()
-    retinanet.module.freeze_bn()
+    retinanet.module.module.freeze_bn()
 
     mAP = csv_eval.evaluate(dataset_val, retinanet, iou_threshold=float(parser.iou_threshold))
     print(mAP)
 
-    with open(f'eval_{parser.csv_annotations_path}_mAP.txt', 'a') as f:
+    with open(f'eval_{parser.csv_annotations_path}_AP.txt', 'a') as f:
         f.write(f'{mAP}\n')
 
 
